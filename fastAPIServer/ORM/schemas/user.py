@@ -1,18 +1,18 @@
 from pydantic import BaseModel
 
 
-class UserBase(BaseModel):
+class PydanticUserBase(BaseModel):
     email: str
 
 
-class UserCreate(UserBase):
-    hashed_password: str
+class PydanticUserCreate(PydanticUserBase):
+    password: str
 
     class Config:
         orm_mode = True
 
 
-class User(UserBase):
+class PydanticUser(PydanticUserBase):
     id: int
 
     class Config:

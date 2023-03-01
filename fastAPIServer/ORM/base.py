@@ -19,6 +19,11 @@ Session = async_sessionmaker(
 )
 
 
+async def get_session():
+    async with Session() as session:
+        yield session
+
+
 async def create_database() -> None:
     try:
         from ORM.models.user import User

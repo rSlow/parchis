@@ -1,18 +1,15 @@
 from fastapi import FastAPI
 
 from ORM.base import create_database, stop_database
+from routes import api_router
 
 app = FastAPI()
+app.include_router(api_router)
 
 
 @app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+async def start():
+    return True
 
 
 @app.on_event("startup")
