@@ -66,4 +66,4 @@ async def get_me(user_schema: PydanticUser = Depends(get_current_user)):
 
 @api_router.get("/")
 async def test():
-    return True
+    return {"message": "ok"}
