@@ -62,7 +62,7 @@ async def authenticate_user(email: str,
 async def get_current_user(session: AsyncSession = Depends(get_session),
                            token: str = Depends(auth_schema)):
     payload = decode_token(token=token)
-
+    
     if payload is not None:
         user = await get_user_by_id(
             user_id=payload["id"],

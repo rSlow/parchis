@@ -3,6 +3,7 @@ import os
 from fastapi.security import OAuth2PasswordBearer
 from jwt import decode as jwt_decode
 from jwt import encode as jwt_encode
+from jwt import DecodeError as JWTDecodeError
 from passlib.hash import bcrypt
 
 from ORM.schemas.user import PydanticUser
@@ -37,6 +38,5 @@ def decode_token(token: str):
             algorithms=["HS256"]
         )
         return payload
-    except Exception as ex:
-        print(ex)
+    except JWTDecodeError:
         return
