@@ -8,8 +8,10 @@ class Base(DeclarativeBase):
     pass
 
 
+URL = f"sqlite+aiosqlite:///{BASE_DIR / 'db.sqlite3'}"
+
 Engine = create_async_engine(
-    url=f"sqlite+aiosqlite:///{BASE_DIR / 'db.sqlite3'}",
+    url=URL,
     echo=True,
 )
 Session = async_sessionmaker(
@@ -27,8 +29,11 @@ async def get_session() -> AsyncSession:
 async def create_database() -> None:
     try:
         from ORM.models.user import User
-        async with Engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
+        from ORM.models.game.room import GameRoom
+        from ORM.models.game.player import GamePlayer
+        from ORM.models.game.piece import GamePiece
+        # async with Engine.begin() as conn:
+        #     await conn.run_sync(Base.metadata.create_all)
 
     except ImportError:
         raise

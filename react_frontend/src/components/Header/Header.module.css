@@ -1,0 +1,22 @@
+.header {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+.app_name {
+    font-weight: 800;
+    font-size: 30px;
+}
+
+.user_block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user_block__button {
+    margin: 10px;
+}

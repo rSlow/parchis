@@ -1,9 +1,13 @@
 import Rooms from "./components/Rooms/Rooms";
+import Header from "./components/Header/Header";
 
 
 function App() {
     return (
-        <Rooms/>
+        <>
+            <Header/>
+            <Rooms/>
+        </>
     )
 }
 
