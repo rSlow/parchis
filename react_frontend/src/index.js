@@ -7,7 +7,7 @@ import {UserProvider} from "./context/userContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <UserProvider>
-        <App/>
-    </UserProvider>
+        // <UserProvider>
+            <App/>
+        // </UserProvider>
 );

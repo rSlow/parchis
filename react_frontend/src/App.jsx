@@ -1,12 +1,10 @@
-import {useState} from "react";
-import axios from 'axios';
-import Register from "./components/Register";
+import Rooms from "./components/Rooms/Rooms";
+
 
 function App() {
-
     return (
-        <Register/>
-    );
+        <Rooms/>
+    )
 }
 
 export default App;

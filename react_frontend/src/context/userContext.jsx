@@ -10,7 +10,7 @@ export function UserProvider(props) {
     useEffect(() => {
         async function getUser() {
             try {
-                const user = await axios.get(
+                await axios.get(
                     "/api/users/me/",
                     {
                         headers: {
@@ -18,7 +18,6 @@ export function UserProvider(props) {
                         }
                     }
                 )
-                // setToken("")
             } catch (e) {
                 if (e.response.status === 401) {
                     setToken(null)
