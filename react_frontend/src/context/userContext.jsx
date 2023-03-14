@@ -3,9 +3,8 @@ import axios from "axios";
 
 export const UserContext = createContext(null);
 
-
 export function UserProvider(props) {
-    const [token, setToken] = useState(localStorage.getItem["userToken"]);
+    const [token, setToken] = useState(localStorage.getItem("userToken"));
 
     useEffect(() => {
         async function getUser() {
@@ -26,7 +25,7 @@ export function UserProvider(props) {
             localStorage.setItem("userToken", token)
         }
 
-        getUser()
+        // getUser()
     }, [token])
 
     return <UserContext.Provider value={[token, setToken]}>

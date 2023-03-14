@@ -1,14 +1,20 @@
+import os
+
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
 from sqlalchemy.orm import DeclarativeBase
+from dotenv import load_dotenv
 
-from config import BASE_DIR
+from config import DB_ENV_FILE_PATH
 
 
 class Base(DeclarativeBase):
     pass
 
 
-URL = f"sqlite+aiosqlite:///{BASE_DIR / 'db.sqlite3'}"
+if os.getenv("DATABASE_URL") is None:
+    load_dotenv(DB_ENV_FILE_PATH)
+
+URL = os.getenv("DATABASE_URL")
 
 Engine = create_async_engine(
     url=URL,

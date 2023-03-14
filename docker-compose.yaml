@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - "${PORT_DB}:5432"
+    env_file:
+      - ./env/pg_dev.env
+    volumes:
+      - pgdata:${PGDATA_PATH}
+    environment:
+      PGDATA: ${PGDATA_PATH}
+
+
+volumes:
+  pgdata:

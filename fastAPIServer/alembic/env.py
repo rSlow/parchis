@@ -8,8 +8,6 @@ from sqlalchemy.engine import Connection
 
 from alembic import context
 
-from ORM.base import Engine, Base
-
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -22,14 +20,19 @@ if config.config_file_name is not None:
 sys.path.append(BASE_DIR)
 
 try:
+    from ORM.base import Base, Engine
+
+    target_metadata = Base.metadata
+except ImportError:
+    raise
+
+try:
     from ORM.models.user import User
     from ORM.models.game.room import GameRoom
     from ORM.models.game.player import GamePlayer
     from ORM.models.game.piece import GamePiece
 except ImportError:
     raise
-
-target_metadata = Base.metadata
 
 
 # other values from the config, defined by the needs of env.py,

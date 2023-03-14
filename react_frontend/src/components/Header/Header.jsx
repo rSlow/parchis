@@ -1,14 +1,15 @@
 import React, {useState} from 'react';
 import classes from "./Header.module.css";
+import {Link} from "react-router-dom";
 
 const Header = () => {
     const [isAuth, setIsAuth] = useState(false)
 
     return (
         <div className={classes.header}>
-            <div className={classes.app_name}>
+            <Link to={"/"} className={classes.app_name}>
                 Мандавошка
-            </div>
+            </Link>
             {isAuth
                 ? <div className={classes.user_block}>
                     Профиль
@@ -18,9 +19,9 @@ const Header = () => {
                         Войти
                     </div>
                     |
-                    <div className={classes.user_block__button}>
-                        Регистрация
-                    </div>
+                    <Link to={"/register/"}
+                       className={classes.user_block__button}
+                    > Регистрация </Link>
                 </div>
             }
         </div>

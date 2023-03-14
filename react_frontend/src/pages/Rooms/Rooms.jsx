@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
-import RoomTab from "./RoomTab/RoomTab";
+import RoomTab from "../../components/Rooms/RoomTab";
 
 const Rooms = () => {
     const [rooms, setRooms] = useState([])
@@ -34,14 +34,16 @@ const Rooms = () => {
             <button onClick={addRoom}>
                 Создать комнату
             </button>
-            {rooms.map(room =>
-                <RoomTab
-                    id={room.id}
-                    key={room.id}
-                    is_started={room.is_started}
-                    players={room.players}
-                />
-            )}
+            {rooms
+                ? rooms.map(room =>
+                    <RoomTab
+                        id={room.id}
+                        key={room.id}
+                        is_started={room.is_started}
+                        players={room.players}
+                    />)
+                : <div>Нет ни одной комнаты, создай первую!</div>
+            }
         </div>
     );
 };

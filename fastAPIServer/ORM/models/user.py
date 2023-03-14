@@ -4,7 +4,7 @@ from datetime import datetime
 from fastapi import HTTPException
 from passlib.hash import bcrypt
 from sqlalchemy import func
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.orm import mapped_column, validates
 
 from ORM.base import Base
