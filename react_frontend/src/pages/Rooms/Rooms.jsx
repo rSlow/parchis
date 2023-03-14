@@ -5,12 +5,6 @@ import RoomTab from "../../components/Rooms/RoomTab";
 const Rooms = () => {
     const [rooms, setRooms] = useState([])
 
-    async function setRoomsWebSocket() {
-        const room_ws = new WebSocket("ws://localhost:8000/ws/rooms/")
-        room_ws.onmessage = event => {
-            setRooms(JSON.parse(event.data))
-        }
-    }
 
     async function addRoom() {
         await axios.post(
@@ -25,8 +19,15 @@ const Rooms = () => {
     }
 
     useEffect(() => {
-        setRoomsWebSocket()
+        const room_ws = new WebSocket("ws://localhost:8000/ws/rooms/")
+        room_ws.onmessage = event => {
+            setRooms(JSON.parse(event.data))
+        }
         getRooms()
+
+        return () => {
+            room_ws.close()
+        }
     }, [])
 
     return (

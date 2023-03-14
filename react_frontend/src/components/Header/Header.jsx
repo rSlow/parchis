@@ -1,26 +1,34 @@
-import React, {useState} from 'react';
+import React, {useContext} from 'react';
 import classes from "./Header.module.css";
 import {Link} from "react-router-dom";
+import {UserContext} from "../../context/userContext";
 
 const Header = () => {
-    const [isAuth, setIsAuth] = useState(false)
+    const {userToken, setUserToken} = useContext(UserContext)
 
     return (
         <div className={classes.header}>
             <Link to={"/"} className={classes.app_name}>
                 Мандавошка
             </Link>
-            {isAuth
+            {userToken !== null
                 ? <div className={classes.user_block}>
-                    Профиль
-                </div>
-                : <div className={classes.user_block}>
                     <div className={classes.user_block__button}>
-                        Войти
+                        Профиль
                     </div>
+                    <Link to={"/login/"} onClick={() => setUserToken(null)}
+                          className={classes.user_block__button}
+                    > Выйти </Link>
+
+                </div>
+
+                : <div className={classes.user_block}>
+                    <Link to={"/login/"}
+                          className={classes.user_block__button}
+                    > Войти </Link>
                     |
                     <Link to={"/register/"}
-                       className={classes.user_block__button}
+                          className={classes.user_block__button}
                     > Регистрация </Link>
                 </div>
             }

@@ -1,6 +1,4 @@
-import json
-
-from fastapi import APIRouter, Path, Query
+from fastapi import APIRouter, Query
 from fastapi import Depends, Body, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
