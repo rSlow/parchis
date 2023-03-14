@@ -1,11 +1,12 @@
 import json
 
-from fastapi import APIRouter, Path
+from fastapi import APIRouter, Path, Query
 from fastapi import Depends, Body, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ORM.CRUD.user import get_user_by_email, add_user, get_all_users, authenticate_user, get_current_user
+from ORM.CRUD.user import get_user_by_email, add_user, get_all_users, authenticate_user, get_current_user, \
+    get_user_by_username
 from ORM.base import get_session
 from ORM.schemas.user import PydanticUserCreate, PydanticUser
 from utils.auth import create_token
@@ -13,11 +14,11 @@ from utils.auth import create_token
 users_api_router = APIRouter(
     prefix="/users",
     tags=["UserAPI"],
-    include_in_schema=False
+    include_in_schema=True
 )
 
 
-@users_api_router.post("/users/")
+@users_api_router.post("/")
 async def create_user(user_schema: PydanticUserCreate = Body(),
                       session: AsyncSession = Depends(get_session)):
     user = await get_user_by_email(
@@ -38,7 +39,7 @@ async def create_user(user_schema: PydanticUserCreate = Body(),
         )
 
 
-@users_api_router.get("/users/", response_model=list[PydanticUser])
+@users_api_router.get("/", response_model=list[PydanticUser])
 async def get_users(session: AsyncSession = Depends(get_session)):
     users = await get_all_users(session=session)
     return users
@@ -62,6 +63,26 @@ async def generate_token(form_data: OAuth2PasswordRequestForm = Depends(),
         )
 
 
-@users_api_router.get("/users/me/")
+@users_api_router.get("/me/")
 async def get_me(user_schema: PydanticUser = Depends(get_current_user)):
     return user_schema
+
+
+@users_api_router.get("/check/email/")
+async def check_email(email: str = Query(),
+                      session: AsyncSession = Depends(get_session)):
+    user = await get_user_by_email(
+        session=session,
+        email=email
+    )
+    return user is not None
+
+
+@users_api_router.get("/check/username/")
+async def check_username(username: str = Query(),
+                         session: AsyncSession = Depends(get_session)):
+    user = await get_user_by_username(
+        session=session,
+        username=username
+    )
+    return user is not None

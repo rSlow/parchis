@@ -4,31 +4,36 @@ import axios from "axios";
 export const UserContext = createContext(null);
 
 export function UserProvider(props) {
-    const [token, setToken] = useState(localStorage.getItem("userToken"));
+    const [userToken, setUserToken] = useState(localStorage.getItem("userToken"));
 
     useEffect(() => {
         async function getUser() {
             try {
-                await axios.get(
+                const response = await axios.get(
                     "/api/users/me/",
                     {
                         headers: {
-                            Authorization: `Bearer ${token}`
+                            Authorization: `Bearer ${userToken}`
                         }
                     }
                 )
+                console.log(response.data)
             } catch (e) {
                 if (e.response.status === 401) {
-                    setToken(null)
+                    setUserToken(null)
                 }
             }
-            localStorage.setItem("userToken", token)
+            localStorage.setItem("userToken", userToken)
         }
 
-        // getUser()
-    }, [token])
+        getUser()
+    }, [userToken])
 
-    return <UserContext.Provider value={[token, setToken]}>
+    useEffect(() => {
+        localStorage.setItem("userToken", userToken)
+    }, [userToken])
+
+    return <UserContext.Provider value={{userToken, setUserToken}}>
         {props.children}
     </UserContext.Provider>
 }

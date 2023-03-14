@@ -1,0 +1,17 @@
+.input {
+    padding: 5px;
+    margin: 5px;
+    font-size: 14px;
+}
+
+.hide_img {
+    position: absolute;
+    height: 30%;
+    right: 15px;
+    opacity: 0.5;
+    cursor: pointer;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+

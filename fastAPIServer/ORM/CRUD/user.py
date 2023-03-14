@@ -22,6 +22,7 @@ async def add_user(
         user: PydanticUserCreate):
     user = ORM_User(
         email=user.email,
+        username=user.username,
         hash_password=hash_password(user.password)
     )
     session.add(user)
@@ -34,6 +35,14 @@ async def add_user(
 async def get_user_by_email(session: AsyncSession,
                             email: str):
     query = select(ORM_User).filter_by(email=email)
+    result = await session.execute(query)
+    user: ORM_User | None = result.scalars().one_or_none()
+    return user
+
+
+async def get_user_by_username(session: AsyncSession,
+                               username: str):
+    query = select(ORM_User).filter_by(username=username)
     result = await session.execute(query)
     user: ORM_User | None = result.scalars().one_or_none()
     return user
@@ -62,7 +71,7 @@ async def authenticate_user(email: str,
 async def get_current_user(session: AsyncSession = Depends(get_session),
                            token: str = Depends(auth_schema)):
     payload = decode_token(token=token)
-    
+
     if payload is not None:
         user = await get_user_by_id(
             user_id=payload["id"],

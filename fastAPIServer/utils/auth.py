@@ -10,7 +10,7 @@ from ORM.schemas.user import PydanticUser
 
 JWT_SECRET = os.getenv("JWT_SECRET")
 
-auth_schema = OAuth2PasswordBearer(tokenUrl="/api/token")
+auth_schema = OAuth2PasswordBearer(tokenUrl="/api/users/token")
 
 
 def hash_password(password: str):
