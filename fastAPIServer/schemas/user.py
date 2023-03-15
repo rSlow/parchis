@@ -18,3 +18,17 @@ class PydanticUser(PydanticUserBase):
 
     class Config:
         orm_mode = True
+
+
+class PydanticUserWithPlayer(BaseModel):
+    class Player(BaseModel):
+        id: int
+        room_id: int
+
+        class Config:
+            orm_mode = True
+
+    player: Player
+
+    class Config:
+        orm_mode = True

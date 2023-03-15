@@ -24,15 +24,19 @@ const InputField = ({label, errorFlag, errorMessage, isPassword, ...props}) => {
                        {...props}
                 />
                 {isPassword === true &&
-                    <img src={require("./eye.png")}
+                    <img className={classes.hide_img}
+                         src={isHide
+                             ? require("./eye_closed.png")
+                             : require("./eye.png")
+                         }
                          alt="hide"
-                         className={classes.hide_img}
                          onClick={toggleHide}
                     />}
             </div>
-            {errorFlag === true && <p className="help mb-3 has-text-danger is-size-6">
-                {errorMessage}
-            </p>}
+            {errorFlag === true &&
+                <p className="help mb-3 has-text-danger is-size-6">
+                    {errorMessage}
+                </p>}
         </div>
     );
 };

@@ -8,6 +8,7 @@ from sqlalchemy.orm import Mapped, relationship
 from sqlalchemy.orm import mapped_column, validates
 
 from ORM.base import Base
+from ORM.models.game.player import GamePlayer
 from utils.re_patterns import EMAIL_PATTERN
 
 
@@ -19,6 +20,8 @@ class User(Base):
     username: Mapped[str] = mapped_column(unique=True)
     hash_password: Mapped[str]
     create_date: Mapped[datetime] = mapped_column(server_default=func.now())
+
+    player: Mapped[GamePlayer] = relationship(back_populates="user", uselist=False)
 
     @validates("email")
     def validate_email(self, _, address):

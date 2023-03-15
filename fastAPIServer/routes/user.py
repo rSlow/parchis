@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Path
 from fastapi import Depends, Body, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ORM.CRUD.user import get_user_by_email, add_user, get_all_users, authenticate_user, get_current_user, \
-    get_user_by_username
+from CRUD.user import get_user_by_email, add_user, get_all_users, authenticate_user, get_current_user, \
+    get_user_by_username, get_user
 from ORM.base import get_session
-from ORM.schemas.user import PydanticUserCreate, PydanticUser
+from schemas.user import PydanticUserCreate, PydanticUser, PydanticUserWithPlayer
 from utils.auth import create_token
 
 users_api_router = APIRouter(
@@ -84,3 +84,10 @@ async def check_username(username: str = Query(),
         username=username
     )
     return user is not None
+
+
+@users_api_router.get("/{user_id}/", response_model=PydanticUserWithPlayer)
+async def get_user_with_player(user_id: int = Path(),
+                               session: AsyncSession = Depends(get_session)):
+    user = await get_user(user_id, session)
+    return user

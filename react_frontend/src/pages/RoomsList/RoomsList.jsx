@@ -2,9 +2,8 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import RoomTab from "../../components/Rooms/RoomTab";
 
-const Rooms = () => {
+const RoomsList = () => {
     const [rooms, setRooms] = useState([])
-
 
     async function addRoom() {
         await axios.post(
@@ -49,4 +48,4 @@ const Rooms = () => {
     );
 };
 
-export default Rooms;
+export default RoomsList;

@@ -1,9 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
-import axios from "axios";
 import InputField from "../../components/UI/InputField/InputField";
 import Button from "../../components/UI/Button/Button";
 import {UserContext} from "../../context/userContext";
 import {useNavigate} from "react-router-dom";
+import {loginAPI} from "../../API/Login";
 
 const Login = () => {
     const [user, setUser] = useState({
@@ -21,28 +21,20 @@ const Login = () => {
 
     async function login(e) {
         e.preventDefault()
-
-        const form = new FormData()
-        form.append("username", user.username)
-        form.append("password", user.password)
-
-        try {
-            const response = await axios.post(
-                "/api/users/token/",
-                form
-            )
-            setUserToken(response.data["access_token"])
-
-        } catch (e) {
-            if (e.response.status === 401) {
-                console.log(e.response.data)
-            }
+        const token = await loginAPI(
+            user.username,
+            user.password,
+        )
+        if (token) {
+            setUserToken(token)
         }
+
     }
 
     return (
         <div>
-            <h1 className="title is-3 is-flex is-justify-content-center mb-0 mt-4"> Страница регистрации </h1>
+            <h1 className="title is-3 is-flex is-justify-content-center mb-0 mt-4">
+                Страница входа </h1>
             <form onSubmit={login}
                   className="box block is-flex is-flex-direction-column"
             >

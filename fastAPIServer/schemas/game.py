@@ -1,6 +1,8 @@
 from __future__ import annotations
 from pydantic import BaseModel
 
+from schemas.user import PydanticUser
+
 
 class PydanticGameRoom(BaseModel):
     id: int
@@ -23,7 +25,7 @@ class PydanticGameRoomWithPlayersAndPieces(PydanticGameRoom):
 
 class PydanticGamePlayer(BaseModel):
     id: int
-    user_id: int
+    user: PydanticUser
     room_id: int
 
     class Config:

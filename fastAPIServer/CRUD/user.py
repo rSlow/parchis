@@ -3,10 +3,11 @@ from typing import Sequence
 from fastapi import Depends, HTTPException
 from sqlalchemy import select, Row, RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from ORM.base import get_session
 from ORM.models.user import User as ORM_User
-from ORM.schemas.user import PydanticUserCreate, PydanticUser
+from schemas.user import PydanticUserCreate, PydanticUser
 from utils.auth import hash_password, auth_schema, decode_token
 
 
@@ -34,9 +35,10 @@ async def add_user(
 
 async def get_user_by_email(session: AsyncSession,
                             email: str):
-    query = select(ORM_User).filter_by(email=email)
-    result = await session.execute(query)
-    user: ORM_User | None = result.scalars().one_or_none()
+    async with session.begin():
+        query = select(ORM_User).filter_by(email=email)
+        result = await session.execute(query)
+        user: ORM_User | None = result.scalars().one_or_none()
     return user
 
 
@@ -84,3 +86,9 @@ async def get_current_user(session: AsyncSession = Depends(get_session),
             status_code=401,
             detail="Invalid email or password"
         )
+
+
+async def get_user(user_id: int, session: AsyncSession):
+    query = select(ORM_User).filter_by(id=user_id).options(selectinload(ORM_User.player))
+    response = await session.execute(query)
+    return response.scalars().one_or_none()

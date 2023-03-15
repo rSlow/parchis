@@ -6,7 +6,7 @@ from jwt import encode as jwt_encode
 from jwt import DecodeError as JWTDecodeError
 from passlib.hash import bcrypt
 
-from ORM.schemas.user import PydanticUser
+from schemas.user import PydanticUser
 
 JWT_SECRET = os.getenv("JWT_SECRET")
 

@@ -16,7 +16,7 @@ export function UserProvider(props) {
     })
 
     useEffect(() => {
-        async function authorize() {
+        async function getMe() {
             if (userToken !== null) {
                 try {
                     const response = await axios.get(
@@ -35,7 +35,7 @@ export function UserProvider(props) {
             }
         }
 
-        authorize()
+        getMe()
     }, [userToken])
 
     useEffect(() => {

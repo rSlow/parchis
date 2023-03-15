@@ -1,8 +1,9 @@
 from fastapi.websockets import WebSocket
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ORM.CRUD.game.room import add_new_room, get_rooms_with_players
-from ORM.schemas.game import PydanticGameRoomWithPlayers, PydanticGameRoomWithPlayersAndPieces
+from CRUD.game.room import add_new_room, get_rooms_with_players
+from ORM.models.game.player import GamePlayer
+from schemas.game import PydanticGameRoomWithPlayers, PydanticGameRoomWithPlayersAndPieces
 from game.configurator import Configurator
 
 
@@ -38,3 +39,6 @@ class GameServer:
         rooms_array = [dict(PydanticGameRoomWithPlayers.from_orm(room)) for room in rooms]
         for websocket in self.main_sockets:
             await websocket.send_json(rooms_array)
+
+    async def create_player_and_add_in_room(self):
+        ...
