@@ -2,7 +2,7 @@ from sqlalchemy.orm import mapped_column, Mapped, relationship
 from datetime import datetime
 from sqlalchemy import func
 from ORM.base import Base
-from ORM.models.game.player import GamePlayer
+from ORM.models.user import User
 
 
 class GameRoom(Base):
@@ -12,7 +12,7 @@ class GameRoom(Base):
     is_started: Mapped[bool] = mapped_column(default=False)
     create_date: Mapped[datetime] = mapped_column(server_default=func.now())
 
-    players: Mapped[list[GamePlayer]] = relationship(
+    users: Mapped[list[User]] = relationship(
         cascade="all, delete",
-        back_populates="room"
+        back_populates="current_room"
     )

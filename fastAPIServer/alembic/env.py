@@ -28,9 +28,8 @@ except ImportError:
 
 try:
     from ORM.models.user import User
-    from ORM.models.game.room import GameRoom
-    from ORM.models.game.player import GamePlayer
-    from ORM.models.game.piece import GamePiece
+    from ORM.models.room import GameRoom
+    from ORM.models.piece import GamePiece
 except ImportError:
     raise
 

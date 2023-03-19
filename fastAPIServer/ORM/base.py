@@ -35,9 +35,8 @@ async def get_session() -> AsyncSession:
 async def create_database() -> None:
     try:
         from ORM.models.user import User
-        from ORM.models.game.room import GameRoom
-        from ORM.models.game.player import GamePlayer
-        from ORM.models.game.piece import GamePiece
+        from ORM.models.room import GameRoom
+        from ORM.models.piece import GamePiece
         # async with Engine.begin() as conn:
         #     await conn.run_sync(Base.metadata.create_all)
 

@@ -1,10 +1,8 @@
 from __future__ import annotations
 from pydantic import BaseModel
 
-from schemas.user import PydanticUser
 
-
-class PydanticGameRoom(BaseModel):
+class PydanticRoom(BaseModel):
     id: int
     is_started: bool
 
@@ -12,28 +10,25 @@ class PydanticGameRoom(BaseModel):
         orm_mode = True
 
 
-class PydanticGameRoomWithPlayers(PydanticGameRoom):
-    players: list[PydanticGamePlayer]
-
-    class Config:
-        orm_mode = True
-
-
-class PydanticGameRoomWithPlayersAndPieces(PydanticGameRoom):
-    players: list[PydanticGamePlayerWithPieces]
-
-
-class PydanticGamePlayer(BaseModel):
+class PydanticUser(BaseModel):
     id: int
-    user: PydanticUser
-    room_id: int
+    current_room_id: int
+    username: str
 
     class Config:
         orm_mode = True
 
 
-class PydanticGamePlayerWithPieces(PydanticGamePlayer):
+class PydanticRoomWithUsers(PydanticRoom):
+    users: list[PydanticUser]
+
+
+class PydanticUserWithPieces(PydanticUser):
     pieces: list[PydanticGamePiece]
+
+
+class PydanticRoomWithUsersAndPieces(PydanticRoom):
+    users: list[PydanticUserWithPieces]
 
 
 class PydanticGamePiece(BaseModel):
@@ -47,11 +42,11 @@ class PydanticGamePiece(BaseModel):
         orm_mode = True
 
 
-PydanticGameRoom.update_forward_refs()
-PydanticGameRoomWithPlayers.update_forward_refs()
-PydanticGameRoomWithPlayersAndPieces.update_forward_refs()
+PydanticRoom.update_forward_refs()
+PydanticUser.update_forward_refs()
+PydanticRoomWithUsers.update_forward_refs()
 
-PydanticGamePlayer.update_forward_refs()
-PydanticGamePlayerWithPieces.update_forward_refs()
+PydanticUserWithPieces.update_forward_refs()
+PydanticRoomWithUsersAndPieces.update_forward_refs()
 
 PydanticGamePiece.update_forward_refs()

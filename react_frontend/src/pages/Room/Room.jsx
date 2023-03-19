@@ -8,6 +8,7 @@ const Room = () => {
     const roomId = useLocation().state
     const [roomData, setRoomData] = useState({})
 
+
     useEffect(() => {
         async function initRoomData() {
             setRoomData(await RoomsAPI.getRoom(roomId))
@@ -15,6 +16,7 @@ const Room = () => {
 
         initRoomData()
     }, [roomId])
+
 
     return (
         <div className="box has-background-light content">

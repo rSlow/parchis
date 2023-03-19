@@ -14,5 +14,6 @@
 }
 
 .buttons_block {
-
+    display: flex;
+    gap: 5px;
 }

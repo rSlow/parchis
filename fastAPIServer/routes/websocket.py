@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Path
+from fastapi import APIRouter
 from fastapi import WebSocket, WebSocketDisconnect
 
 from game.game_server import GameServer

@@ -1,8 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
 import InputField from "../../components/UI/InputField/InputField";
 import Button from "../../components/UI/Button/Button";
-import {checkEmailAPI, checkUsernameAPI, registerUserAPI} from "../../API/Register"
+import RegisterAPI from "../../API/Register"
 import {UserContext} from "../../context/userContext";
+import {useNavigate} from "react-router-dom";
 
 const Register = () => {
     const {setUserToken} = useContext(UserContext)
@@ -18,6 +19,8 @@ const Register = () => {
     const [isEmailExist, setIsEmailExist] = useState(false)
     const [isUsernameExist, setIsUsernameExist] = useState(false)
 
+    const navigate = useNavigate()
+
     useEffect(() => {
         setIsPasswordsNoEqual(user.password !== user.confirm_password)
     }, [user.password, user.confirm_password])
@@ -25,7 +28,7 @@ const Register = () => {
     useEffect(() => {
         if (user.email) {
             (async function checkEmail() {
-                setIsEmailExist(await checkEmailAPI(user.email))
+                setIsEmailExist(await RegisterAPI.checkEmail(user.email))
             })()
         }
     }, [user.email])
@@ -33,7 +36,7 @@ const Register = () => {
     useEffect(() => {
         if (user.username) {
             (async function () {
-                setIsUsernameExist(await checkUsernameAPI(user.username))
+                setIsUsernameExist(await RegisterAPI.checkUsername(user.username))
             })()
         }
     }, [user.username])
@@ -42,12 +45,13 @@ const Register = () => {
         event.preventDefault()
         if (user.username && user.email && user.password && isPasswordsNoEqual !== true) {
             try {
-                const response = await registerUserAPI(
+                const response = await RegisterAPI.registerUser(
                     user.email,
                     user.password,
                     user.username
                 )
                 setUserToken(response.data["access_token"])
+                navigate("/")
             } catch (e) {
                 console.log(e.response.data["detail"])
             }

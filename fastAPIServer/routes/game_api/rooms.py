@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, Body, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from CRUD.game.player import create_player
-from CRUD.game.room import get_rooms_with_players, get_orm_room
+from CRUD.room import ORMRoomAPI
 
 from ORM.base import get_session
-from schemas.game import PydanticGameRoomWithPlayers
+from schemas.game import PydanticRoomWithUsers
 from game.game_server import GameServer
 
 rooms_api_router = APIRouter(
@@ -16,34 +15,37 @@ rooms_api_router = APIRouter(
 server = GameServer()
 
 
-@rooms_api_router.get("/", response_model=list[PydanticGameRoomWithPlayers])
+@rooms_api_router.get("/", response_model=list[PydanticRoomWithUsers])
 async def get_rooms(session: AsyncSession = Depends(get_session)):
-    rooms = await get_rooms_with_players(session)
+    rooms = await ORMRoomAPI.get_all(session)
     return rooms
 
 
 @rooms_api_router.post("/")
-async def add_room(session: AsyncSession = Depends(get_session)):
-    await server.add_new_room(session)
+async def add_room(user_id: int = Body(),
+                   session: AsyncSession = Depends(get_session)):
+    room = await server.add_new_room(
+        session=session,
+        user_id=user_id
+    )
+    return room
 
 
 @rooms_api_router.put("/{room_id}/")
 async def add_player_in_room(room_id: int = Path(),
                              user_id: int = Body(),
                              session: AsyncSession = Depends(get_session)):
-    room = await create_player(
+    await server.add_player_in_room(
         session=session,
         user_id=user_id,
         room_id=room_id
     )
 
-    return room
 
-
-@rooms_api_router.get("/{room_id}/", response_model=PydanticGameRoomWithPlayers)
+@rooms_api_router.get("/{room_id}/", response_model=PydanticRoomWithUsers)
 async def get_room(room_id: int = Path(),
                    session: AsyncSession = Depends(get_session)):
-    rooms = await get_orm_room(
+    rooms = await ORMRoomAPI.get(
         session=session,
         room_id=room_id
     )

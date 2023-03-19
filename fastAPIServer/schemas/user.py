@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class PydanticUserBase(BaseModel):
@@ -20,10 +20,10 @@ class PydanticUser(PydanticUserBase):
         orm_mode = True
 
 
-class PydanticUserWithPlayer(BaseModel):
+class PydanticUserWithPlayer(PydanticUserBase):
     class Player(BaseModel):
         id: int
-        room_id: int
+        current_room_id: int
 
         class Config:
             orm_mode = True

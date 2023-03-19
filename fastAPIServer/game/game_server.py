@@ -1,9 +1,11 @@
+import asyncio
+
 from fastapi.websockets import WebSocket
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from CRUD.game.room import add_new_room, get_rooms_with_players
-from ORM.models.game.player import GamePlayer
-from schemas.game import PydanticGameRoomWithPlayers, PydanticGameRoomWithPlayersAndPieces
+from CRUD.user import ORMUserAPI
+from CRUD.room import ORMRoomAPI
+from schemas.game import PydanticRoomWithUsers, PydanticRoomWithUsersAndPieces
 from game.configurator import Configurator
 
 
@@ -18,9 +20,11 @@ class GameServer:
     def __init__(self):
         self._configurator = Configurator()
 
-        self.rooms_info: dict[int, PydanticGameRoomWithPlayersAndPieces] = {}  # {id: room}
+        self.rooms_info: dict[int, PydanticRoomWithUsersAndPieces] = {}  # {id: room}
 
         self.main_sockets: list[WebSocket] = []
+        self.room_waiting_sockets: dict[int, list[WebSocket]] = {}
+        self.room_playing_sockets: dict[int, list[WebSocket]] = {}
 
     async def register_socket(self, websocket: WebSocket):
         await websocket.accept()
@@ -32,13 +36,23 @@ class GameServer:
         except ValueError as ex:
             print(ex)
 
-    async def add_new_room(self, session: AsyncSession):
-        await add_new_room(session)
+    async def send_room_to_all_connected(self, session: AsyncSession):
+        rooms = await ORMRoomAPI.get_all(session)
+        rooms_array = [PydanticRoomWithUsers.from_orm(room).dict() for room in rooms]
 
-        rooms = await get_rooms_with_players(session)
-        rooms_array = [dict(PydanticGameRoomWithPlayers.from_orm(room)) for room in rooms]
-        for websocket in self.main_sockets:
-            await websocket.send_json(rooms_array)
+        tasks = [websocket.send_json(rooms_array) for websocket in self.main_sockets]
+        await asyncio.gather(*tasks)
 
-    async def create_player_and_add_in_room(self):
-        ...
+    async def add_new_room(self, session: AsyncSession, user_id: int):
+        user = await ORMUserAPI.get(user_id, session)
+        room = await ORMRoomAPI.add_new(session, user)
+        await self.send_room_to_all_connected(session=session)
+        return room
+
+    async def add_player_in_room(self,
+                                 session: AsyncSession,
+                                 room_id: int,
+                                 user_id: int):
+        user = await ORMUserAPI.get(user_id, session)
+        await ORMRoomAPI.add_user(session=session, room_id=room_id, user=user)
+        await self.send_room_to_all_connected(session=session)

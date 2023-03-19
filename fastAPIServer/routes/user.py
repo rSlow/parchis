@@ -3,8 +3,7 @@ from fastapi import Depends, Body, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from CRUD.user import get_user_by_email, add_user, get_all_users, authenticate_user, get_current_user, \
-    get_user_by_username, get_user
+from CRUD.user import ORMUserAPI
 from ORM.base import get_session
 from schemas.user import PydanticUserCreate, PydanticUser, PydanticUserWithPlayer
 from utils.auth import create_token
@@ -19,12 +18,12 @@ users_api_router = APIRouter(
 @users_api_router.post("/")
 async def create_user(user_schema: PydanticUserCreate = Body(),
                       session: AsyncSession = Depends(get_session)):
-    user = await get_user_by_email(
+    user = await ORMUserAPI.get_by_email(
         session=session,
         email=user_schema.email
     )
     if user is None:
-        new_user = await add_user(
+        new_user = await ORMUserAPI.add(
             session=session,
             user=user_schema
         )
@@ -39,14 +38,14 @@ async def create_user(user_schema: PydanticUserCreate = Body(),
 
 @users_api_router.get("/", response_model=list[PydanticUser])
 async def get_users(session: AsyncSession = Depends(get_session)):
-    users = await get_all_users(session=session)
+    users = await ORMUserAPI.get_all(session=session)
     return users
 
 
 @users_api_router.post("/token/")
 async def generate_token(form_data: OAuth2PasswordRequestForm = Depends(),
                          session: AsyncSession = Depends(get_session)):
-    user = await authenticate_user(
+    user = await ORMUserAPI.authenticate(
         email=form_data.username,
         password=form_data.password,
         session=session
@@ -62,14 +61,14 @@ async def generate_token(form_data: OAuth2PasswordRequestForm = Depends(),
 
 
 @users_api_router.get("/me/")
-async def get_me(user_schema: PydanticUser = Depends(get_current_user)):
+async def get_me(user_schema: PydanticUser = Depends(ORMUserAPI.get_current)):
     return user_schema
 
 
 @users_api_router.get("/check/email/")
 async def check_email(email: str = Query(),
                       session: AsyncSession = Depends(get_session)):
-    user = await get_user_by_email(
+    user = await ORMUserAPI.get_by_email(
         session=session,
         email=email
     )
@@ -79,7 +78,7 @@ async def check_email(email: str = Query(),
 @users_api_router.get("/check/username/")
 async def check_username(username: str = Query(),
                          session: AsyncSession = Depends(get_session)):
-    user = await get_user_by_username(
+    user = await ORMUserAPI.get_by_username(
         session=session,
         username=username
     )
@@ -89,5 +88,5 @@ async def check_username(username: str = Query(),
 @users_api_router.get("/{user_id}/", response_model=PydanticUserWithPlayer)
 async def get_user_with_player(user_id: int = Path(),
                                session: AsyncSession = Depends(get_session)):
-    user = await get_user(user_id, session)
+    user = await ORMUserAPI.get(user_id, session)
     return user

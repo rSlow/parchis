@@ -4,19 +4,19 @@ import {Link} from "react-router-dom";
 import {UserContext} from "../../context/userContext";
 
 const Header = () => {
-    const {userToken, setUserToken} = useContext(UserContext)
+    const {user, isAuth, logout} = useContext(UserContext)
 
     return (
         <div className={classes.header}>
             <Link to={"/"} className={classes.app_name}>
                 Мандавошка
             </Link>
-            {userToken !== null
+            {isAuth
                 ? <div className={classes.user_block}>
                     <div className={classes.user_block__button}>
-                        Профиль
+                        {user.email}
                     </div>
-                    <Link to={"/login/"} onClick={() => setUserToken(null)}
+                    <Link to={"/login/"} onClick={logout}
                           className={classes.user_block__button}
                     > Выйти </Link>
 

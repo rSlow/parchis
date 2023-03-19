@@ -4,16 +4,19 @@ import axios from "axios";
 export const UserContext = createContext(null);
 
 export function UserProvider(props) {
-    const [userToken, setUserToken] = useState(
-        localStorage.getItem("userToken") === "null"
-            ? null
-            : localStorage.getItem("userToken")
-    );
+    const localUserToken = localStorage.getItem("userToken")
+    const [userToken, setUserToken] = useState(localUserToken === "null" ? null : localUserToken);
     const [user, setUser] = useState({
         username: "",
         email: "",
         id: ""
     })
+    const [isAuth, setIsAuth] = useState(false)
+
+    function logout() {
+        setUserToken(null)
+        setIsAuth(false)
+    }
 
     useEffect(() => {
         async function getMe() {
@@ -28,8 +31,10 @@ export function UserProvider(props) {
                         }
                     )
                     setUser({...response.data})
+                    setIsAuth(true)
+                    localStorage.setItem("userToken", userToken)
                 } catch (e) {
-                    await setUserToken(null)
+                    logout()
                     console.log(e.response)
                 }
             }
@@ -38,12 +43,8 @@ export function UserProvider(props) {
         getMe()
     }, [userToken])
 
-    useEffect(() => {
-        localStorage.setItem("userToken", userToken)
-    }, [userToken])
 
-
-    return <UserContext.Provider value={{userToken, setUserToken, user}}>
+    return <UserContext.Provider value={{userToken, setUserToken, logout, user, isAuth}}>
         {props.children}
     </UserContext.Provider>
 }
