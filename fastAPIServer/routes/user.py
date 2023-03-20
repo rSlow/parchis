@@ -25,7 +25,7 @@ async def create_user(user_schema: PydanticUserCreate = Body(),
     if user is None:
         new_user = await ORMUserAPI.add(
             session=session,
-            user=user_schema
+            user_schema=user_schema
         )
         return create_token(new_user)
 
@@ -88,5 +88,5 @@ async def check_username(username: str = Query(),
 @users_api_router.get("/{user_id}/", response_model=PydanticUserWithPlayer)
 async def get_user_with_player(user_id: int = Path(),
                                session: AsyncSession = Depends(get_session)):
-    user = await ORMUserAPI.get(user_id, session)
+    user = await ORMUserAPI.get_by_id(user_id, session)
     return user

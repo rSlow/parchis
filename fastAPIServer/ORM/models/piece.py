@@ -9,9 +9,9 @@ class GamePiece(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user = relationship(
-        "User",
+    player_id: Mapped[int] = mapped_column(ForeignKey("game_player.id"))
+    player = relationship(
+        "GamePlayer",
         back_populates="pieces"
     )
 

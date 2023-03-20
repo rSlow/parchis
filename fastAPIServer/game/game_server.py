@@ -1,12 +1,10 @@
-import asyncio
-
-from fastapi.websockets import WebSocket
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from CRUD.player import ORMPlayerAPI
 from CRUD.user import ORMUserAPI
 from CRUD.room import ORMRoomAPI
-from schemas.game import PydanticRoomWithUsers, PydanticRoomWithUsersAndPieces
 from game.configurator import Configurator
+from game.socket_managers import MainSocketManager, RoomSocketManager
 
 
 class GameServer:
@@ -19,40 +17,32 @@ class GameServer:
 
     def __init__(self):
         self._configurator = Configurator()
-
-        self.rooms_info: dict[int, PydanticRoomWithUsersAndPieces] = {}  # {id: room}
-
-        self.main_sockets: list[WebSocket] = []
-        self.room_waiting_sockets: dict[int, list[WebSocket]] = {}
-        self.room_playing_sockets: dict[int, list[WebSocket]] = {}
-
-    async def register_socket(self, websocket: WebSocket):
-        await websocket.accept()
-        self.main_sockets.append(websocket)
-
-    async def disconnect_socket(self, websocket: WebSocket):
-        try:
-            self.main_sockets.remove(websocket)
-        except ValueError as ex:
-            print(ex)
-
-    async def send_room_to_all_connected(self, session: AsyncSession):
-        rooms = await ORMRoomAPI.get_all(session)
-        rooms_array = [PydanticRoomWithUsers.from_orm(room).dict() for room in rooms]
-
-        tasks = [websocket.send_json(rooms_array) for websocket in self.main_sockets]
-        await asyncio.gather(*tasks)
+        self.main_sockets = MainSocketManager(self)
+        self.room_sockets = RoomSocketManager(self)
 
     async def add_new_room(self, session: AsyncSession, user_id: int):
-        user = await ORMUserAPI.get(user_id, session)
-        room = await ORMRoomAPI.add_new(session, user)
-        await self.send_room_to_all_connected(session=session)
+        room = await ORMRoomAPI.add_new(user_id, session)
+        await self.main_sockets.dispatch(session=session)
         return room
 
     async def add_player_in_room(self,
                                  session: AsyncSession,
                                  room_id: int,
                                  user_id: int):
-        user = await ORMUserAPI.get(user_id, session)
-        await ORMRoomAPI.add_user(session=session, room_id=room_id, user=user)
-        await self.send_room_to_all_connected(session=session)
+        user = await ORMUserAPI.get_by_id(user_id, session)
+        await ORMRoomAPI.add_player(session=session, room_id=room_id, user_id=user.id)
+        await self.main_sockets.dispatch(session=session)
+
+    async def delete_player_from_room(self, user_id: int, room_id: int, session: AsyncSession):
+        player = await ORMPlayerAPI.get_by_user_id(user_id=user_id, session=session)
+        if player is not None:
+            await ORMRoomAPI.delete_player(
+                player=player,
+                session=session
+            )
+            await ORMRoomAPI.check_empty(room_id=room_id, session=session)
+        await self.main_sockets.dispatch(session=session)
+
+    async def change_room_name(self, room_id: int, name: str, session: AsyncSession):
+        await ORMRoomAPI.change_name(room_id=room_id, name=name, session=session)
+        await self.main_sockets.dispatch(session=session)

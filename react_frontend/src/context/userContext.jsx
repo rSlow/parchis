@@ -16,6 +16,7 @@ export function UserProvider(props) {
     function logout() {
         setUserToken(null)
         setIsAuth(false)
+        localStorage.setItem("userToken", null)
     }
 
     useEffect(() => {

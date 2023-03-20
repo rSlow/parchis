@@ -26,11 +26,6 @@ async def middleware(request: Request, call_next):
     return await call_next(request)
 
 
-@app.get("/")
-async def start():
-    return True
-
-
 @app.on_event("startup")
 async def startup():
     await create_database()

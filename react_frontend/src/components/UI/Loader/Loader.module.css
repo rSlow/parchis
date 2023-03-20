@@ -1,0 +1,25 @@
+@keyframes moveLoader {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loader {
+    width: 100px;
+    height: 100px;
+
+    border: 5px aqua dotted;
+    border-bottom: transparent;
+    border-right: transparent;
+
+    border-radius: 50%;
+    animation: 1.5s cubic-bezier(.19,.59,.88,.45) infinite moveLoader;
+}
+
+.loader_wrapper {
+    display: flex;
+    justify-content: center;
+}

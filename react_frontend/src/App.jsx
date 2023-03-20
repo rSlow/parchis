@@ -6,6 +6,8 @@ import NotFound from "./pages/NotFound/NotFound";
 import Login from "./pages/Login/Login";
 import Room from "./pages/Room/Room";
 import classes from "./App.module.css";
+import About from "./pages/About/About";
+import Chat from "./components/Chat/Chat";
 
 
 function App() {
@@ -18,9 +20,11 @@ function App() {
                     <Route path={"/room/:id"} element={<Room/>}/>
                     <Route path={"/login/"} element={<Login/>}/>
                     <Route path={"/register/"} element={<Register/>}/>
+                    <Route path={"/about/"} element={<About/>}/>
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>
             </div>
+            {/*<Chat/>*/}
         </BrowserRouter>
 
     )

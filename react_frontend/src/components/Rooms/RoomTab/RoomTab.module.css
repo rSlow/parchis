@@ -2,9 +2,9 @@
     border-radius: 10px;
     box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.02);
     color: #2d2d2d;
-    background-color: rgba(255, 228, 0, 0.15);
+    background-color: rgb(216, 255, 244);
+    display: grid;
     justify-content: space-between;
-    display: flex;
     margin: 15px;
     padding: 15px;
 }
@@ -16,4 +16,9 @@
 .buttons_block {
     display: flex;
     gap: 5px;
+}
+
+.room_name {
+    font-weight: 600;
+    font-size: 20px;
 }

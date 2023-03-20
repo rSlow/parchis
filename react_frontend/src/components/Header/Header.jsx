@@ -11,6 +11,7 @@ const Header = () => {
             <Link to={"/"} className={classes.app_name}>
                 Мандавошка
             </Link>
+            <Link to={"/about/"}> О игре</Link>
             {isAuth
                 ? <div className={classes.user_block}>
                     <div className={classes.user_block__button}>
